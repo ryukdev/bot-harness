@@ -2,3 +2,5 @@ node_modules/
 .bot-harness/
 accounts.json
 app-seat.env
+internal/
+CLAUDE.md

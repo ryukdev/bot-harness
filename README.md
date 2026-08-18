@@ -43,9 +43,15 @@ bot-harness config model opus            # the model whose limit you actually hi
 bot-harness token add you@work.com  sk-… # add each account you own (paste the token)
 bot-harness token list                   # your emails + who has headroom right now
 bot-harness status                       # which account THIS session is paying
-bot-harness seat                         # switch this thread to a healthy account
-bot-harness app on                       # make the DESKTOP APP pick a healthy seat on reconnect
+bot-harness switch bunny@you.com         # move THIS chat to another account (auto-reconnects)
+bot-harness session status               # session id + how full its memory is
+bot-harness session rotate --in-place    # same chat, fresh memory — work carried over (auto-reconnects)
+bot-harness app on                       # desktop-app sessions pick a healthy seat on reconnect
 ```
+
+Both `switch` and `rotate --in-place` reconnect the app **automatically** (a tiny
+launchd watcher drops the connection after your reply renders — usually zero
+clicks, at most one retry tap).
 
 Your tokens live only in `~/.bot-harness/accounts.json` (chmod 600) — never
 printed, never committed, never sent anywhere. bot-harness stores and routes; it

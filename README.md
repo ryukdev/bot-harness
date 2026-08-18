@@ -6,7 +6,7 @@ Keep your Claude Code session alive when an account runs out of room on the
 model you use — by switching to another account *you own* and resuming the
 **same conversation**. No new chat, no re-login. Works with **any Claude model**.
 
-![demo](assets/demo.svg)
+![demo](assets/demo.gif)
 
 ## How it works
 

@@ -1,0 +1,10 @@
+{
+  "name": "bot-harness",
+  "description": "Keep one Claude Code thread alive across context limits and across your own accounts: rotate the context in place (same session id, work carried forward) or re-open the thread on another account you own.",
+  "version": "0.1.0",
+  "author": { "name": "ryukdev", "url": "https://github.com/ryukdev" },
+  "homepage": "https://github.com/ryukdev/bot-harness",
+  "repository": "https://github.com/ryukdev/bot-harness",
+  "license": "MIT",
+  "keywords": ["session", "context", "continuity", "handoff", "accounts"]
+}

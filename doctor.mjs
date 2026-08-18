@@ -20,7 +20,10 @@ export async function doctor(){
   let shellForces=false;
   try { const { execSync } = await import('node:child_process'); const out=execSync('sh -lc "echo $CLAUDE_CODE_OAUTH_TOKEN" 2>/dev/null',{encoding:'utf8'}); shellForces = out.trim().length>0; } catch {}
   console.log(`  ${shellForces?'\x1b[33m!\x1b[0m':'\x1b[32m✓\x1b[0m'} login shell does not hardcode CLAUDE_CODE_OAUTH_TOKEN (${shellForces?'a shell export overrides the seat — check ~/.zshenv/.zprofile':'clean'})`);
-  console.log('\n  running on the LOCAL spine — swaps cost one reconnect, mobile drops.');
+  const { status: mobileStatus } = await import('./src/mobile.mjs');
+  let m; try { m = mobileStatus(); } catch { m = null; }
+  console.log(`  ${m?.enabled?'\x1b[32m✓\x1b[0m':'\x1b[33m!\x1b[0m'} mobile continuity: ${m?.enabled?'on — a switch or rotate re-registers Remote Control by itself':'off — after a rotate the phone needs /remote-control again (bot-harness mobile on)'}`);
+  console.log('\n  running on the LOCAL spine — each swap costs one reconnect.');
   console.log('  \x1b[2mwant seats + sessions to rotate while you type, on any phone browser? that is a stronger spine → sharingu (https://github.com/ryukdev/sharingu)\x1b[0m');
 }
 if (import.meta.url === `file://${process.argv[1]}`) doctor();

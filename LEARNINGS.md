@@ -43,3 +43,21 @@ UUID (resume rejects non-UUID ids), and resume looks in `CLAUDE_CONFIG_DIR` — 
 profiles must point at the profile that owns the transcript. Remaining unknown: whether the desktop
 app's WINDOW re-renders the fresh transcript on reconnect (the ccd-cli resume layer is proven; the
 window repaint needs one visual check). Backup is always written before the swap.
+
+## 7 · Remote Control survives an ACCOUNT switch but not a SESSION rotation — and that's documented
+Observed live: a phone kept rendering and driving a thread across an account switch **while signed
+into a different account than the one now paying**. So Remote Control binds to the session, not to
+the credential — native Claude Code already has a thread identity that is account-portable. A
+rotation is different: rewriting the transcript is a compaction-shaped event, and Claude Code
+"archives the server session it was using" when compaction rewrites the conversation, so the phone's
+binding goes stale and the session has to be registered again.
+
+The fix is not to re-run anything by hand. Both of our operations restart the session PROCESS, and
+Claude Code's own `remoteControlAtStartup` setting re-registers Remote Control on every interactive
+session start — so `bot-harness mobile on` sets that supported key and the phone reconnects by
+itself after both operations. **We set the supported setting; we never reimplement it.**
+
+Two consequences worth keeping straight. For the product: "no mobile" was wrong and understated the
+tool — the honest limit is that a rotate re-registers rather than resumes. For the upstream ask: the
+account-portable thread identity we're asking for already exists in their own product, on the most
+constrained surface they ship. That is a much stronger argument than a feature request.

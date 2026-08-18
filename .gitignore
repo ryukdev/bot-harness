@@ -4,3 +4,8 @@ accounts.json
 app-seat.env
 internal/
 CLAUDE.md
+
+# raw recordings + strategy copies that must never ship
+*.mov
+ac-kb.html
+*-kb.html

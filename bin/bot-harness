@@ -82,9 +82,10 @@ async function main(){
     }
     return;
   }
+  if (cmd === 'mobile'){ const { run } = await import('../src/mobile.mjs'); return run(sub); }
   if (cmd === 'app'){ const { run } = await import('../src/app-seat.mjs'); return run(sub, rest); }
   if (cmd === 'doctor'){ const { doctor } = await import('../doctor.mjs'); return doctor(); }
-  die('bot-harness token|status|seat|switch|session|app|config|doctor');
+  die('bot-harness token|status|seat|switch|session|mobile|app|config|doctor');
 }
 function die(m){ console.error(m); process.exit(1); }
 main().catch(e => die(String(e.message||e)));

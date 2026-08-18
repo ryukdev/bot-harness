@@ -1,0 +1,9 @@
+{
+  "name": "bot-harness",
+  "version": "0.1.0",
+  "description": "one thread, many Claude accounts — keep your Claude Code session alive across account switches",
+  "type": "module",
+  "bin": { "bot-harness": "bin/bot-harness" },
+  "license": "MIT",
+  "engines": { "node": ">=18" }
+}

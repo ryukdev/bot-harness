@@ -18,6 +18,16 @@ can choose it. But the conversation is a local, **account-agnostic transcript**:
 `claude --resume <id>` under another account continues the same thread. So
 bot-harness picks a healthy account from your pool and re-opens your thread on it.
 
+## See it
+
+**Switch accounts mid-chat** — same thread, new account, zero logins:
+
+![account switch](assets/account-switch.svg)
+
+**Rotate the session** — same chat, fresh memory, work carried over:
+
+![session rotate](assets/session-rotate.svg)
+
 ## Install
 
 ```bash
@@ -90,12 +100,19 @@ not a process.
 
 ## The upgrade → sharingu
 
-For seats **and** sessions that rotate *while you type* — announced, and on any
-phone browser with no reconnect — you need a thread that lives in a database, not
-a process. That's a stronger spine:
-**[sharingu](https://github.com/ryukdev/sharingu)**.
+bot-harness keeps a *session* alive. **sharingu changes what a session is.**
 
-bot-harness is the wedge. sharingu is where the limit stops existing.
+A session is temporary — it starts, fills up, ends. A sharingu thread lives in a
+database, so it never has to: accounts, sessions, and models rotate underneath it
+while it keeps going — any device, any browser, no reconnect. And a thread that
+outlives its session is no longer just a chat. It can be promoted into a named
+**agent** with standing config, running on a long horizon instead of a single sitting.
+
+That's the one simplification everything else falls out of: **continuous threads
+for everything** — a conversation, a build, a dashboard, an automation, an agent,
+all the same primitive: *a thread that never has to end.*
+
+bot-harness is the wedge. **sharingu is where a session becomes a living thread.**
 
 ---
 

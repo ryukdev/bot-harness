@@ -3,7 +3,31 @@
   "version": "0.1.0",
   "description": "one thread, many Claude accounts — keep your Claude Code session alive across account switches",
   "type": "module",
-  "bin": { "bot-harness": "bin/bot-harness" },
+  "bin": {
+    "bot-harness": "bin/bot-harness"
+  },
   "license": "MIT",
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "cli",
+    "session",
+    "account",
+    "anthropic"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryukdev/bot-harness.git"
+  },
+  "homepage": "https://github.com/ryukdev/bot-harness#readme",
+  "bugs": {
+    "url": "https://github.com/ryukdev/bot-harness/issues"
+  },
+  "author": "ryukdev",
+  "scripts": {
+    "test": "node --test"
+  }
 }

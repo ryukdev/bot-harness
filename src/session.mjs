@@ -22,7 +22,7 @@ const ex = promisify(execFile);
 const SNAP_DIR = join(homedir(), '.bot-harness', 'snapshots');
 
 export function transcriptPath(sessionId, cwd = process.cwd()){
-  const roots = [process.env.CLAUDE_CONFIG_DIR, join(homedir(),'.claude'), join(homedir(),'.claude-bunny')].filter(Boolean);
+  const roots = [process.env.CLAUDE_CONFIG_DIR, join(homedir(),'.claude')].filter(Boolean);
   for (const root of roots){
     const p = join(root.endsWith('projects') ? root : join(root,'projects'), cwd.replace(/[^a-zA-Z0-9]/g,'-'), `${sessionId}.jsonl`);
     if (existsSync(p)) return p;

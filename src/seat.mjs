@@ -6,7 +6,7 @@ import { readdirSync, statSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 export function newestSession(cwd = process.cwd()){
-  const roots = [process.env.CLAUDE_CONFIG_DIR, join(homedir(),'.claude'), join(homedir(),'.claude-bunny')].filter(Boolean);
+  const roots = [process.env.CLAUDE_CONFIG_DIR, join(homedir(),'.claude')].filter(Boolean);
   const rows = [];
   for (const root of roots){
     const dir = join(root.endsWith('projects') ? root : join(root,'projects'), cwd.replace(/[^a-zA-Z0-9]/g,'-'));

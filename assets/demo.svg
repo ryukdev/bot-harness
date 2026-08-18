@@ -5,11 +5,11 @@
   <text x="380" y="25" fill="#6a6f87" font-size="13" text-anchor="middle">bot-harness — one chat, many accounts, fresh memory</text>
   <text font-size="15" xml:space="preserve">
     <tspan x="24" y="78" fill="#565f89">you:</tspan><tspan fill="#c0caf5"> which account are you on?</tspan>
-    <tspan x="24" y="104" fill="#9ece6a">→</tspan><tspan fill="#c0caf5"> dev@ryuklabs.io</tspan>
-    <tspan x="24" y="146" fill="#565f89">you:</tspan><tspan fill="#c0caf5"> switch to bunny</tspan>
-    <tspan x="24" y="172" fill="#9ece6a">→</tspan><tspan fill="#c0caf5"> bunny@ryuklabs.io</tspan><tspan fill="#565f89">  · brief auto-reconnect…</tspan>
+    <tspan x="24" y="104" fill="#9ece6a">→</tspan><tspan fill="#c0caf5"> you@personal.com</tspan>
+    <tspan x="24" y="146" fill="#565f89">you:</tspan><tspan fill="#c0caf5"> switch to work</tspan>
+    <tspan x="24" y="172" fill="#9ece6a">→</tspan><tspan fill="#c0caf5"> you@work.com</tspan><tspan fill="#565f89">  · brief auto-reconnect…</tspan>
     <tspan x="24" y="198" fill="#565f89">you:</tspan><tspan fill="#c0caf5"> check</tspan>
-    <tspan x="24" y="224" fill="#9ece6a">✓</tspan><tspan fill="#c0caf5"> bunny@ryuklabs.io</tspan><tspan fill="#565f89">   same chat, new account</tspan>
+    <tspan x="24" y="224" fill="#9ece6a">✓</tspan><tspan fill="#c0caf5"> you@work.com</tspan><tspan fill="#565f89">   same chat, new account</tspan>
     <tspan x="24" y="266" fill="#565f89">you:</tspan><tspan fill="#c0caf5"> what's your session id?</tspan>
     <tspan x="24" y="292" fill="#9ece6a">→</tspan><tspan fill="#c0caf5"> session 15291c09 · memory used: ~14k of 200k (7% full)</tspan>
     <tspan x="24" y="334" fill="#565f89">you:</tspan><tspan fill="#c0caf5"> rotate to a new session</tspan>

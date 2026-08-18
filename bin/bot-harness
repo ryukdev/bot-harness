@@ -6,6 +6,7 @@ import { pickHealthy } from '../src/router.mjs';
 import { get as getConfig, setModel } from '../src/config.mjs';
 import { newestSession, resumeOn } from '../src/seat.mjs';
 import { currentEmail } from '../src/whoami.mjs';
+import { rotate as sessionRotate, makeHandoff, transcriptPath, readTurns } from '../src/session.mjs';
 const [cmd, sub, ...rest] = process.argv.slice(2);
 const arg = (f) => { const i = rest.indexOf(`--${f}`); return i>-1 ? rest[i+1] : null; };
 const model = arg('model') || getConfig().model;
@@ -37,9 +38,14 @@ async function main(){
     console.log(`\nseat → \x1b[1m${email}\x1b[0m${session?` · resuming ${session.slice(0,8)}…`:''}`);
     const r = resumeOn(token, session); process.exit(r.status ?? 0);
   }
+  if (cmd === 'session'){
+    if (sub === 'rotate'){ await sessionRotate(); return; }
+    if (sub === 'snapshot'){ const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const r=await makeHandoff(sid); console.log(`snapshot: ${r.turns} turns → ${r.snap}\n\n${r.handoff}`); return; }
+    const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid); console.log(p?`current session ${sid.slice(0,8)}… · ${readTurns(p,9999).length} turns on disk`:'no session here'); return;
+  }
   if (cmd === 'app'){ const { run } = await import('../src/app-seat.mjs'); return run(sub, rest); }
   if (cmd === 'doctor'){ const { doctor } = await import('../doctor.mjs'); return doctor(); }
-  die('bot-harness token|status|seat|app|config|doctor');
+  die('bot-harness token|status|seat|session|app|config|doctor');
 }
 function die(m){ console.error(m); process.exit(1); }
 main().catch(e => die(String(e.message||e)));

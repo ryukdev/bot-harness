@@ -52,12 +52,13 @@ export async function makeHandoff(sessionId, token = null){
   return { snap, handoff: stdout.trim(), turns: turns.length, srcChars: convo.length };
 }
 export async function rotate(token = null){
+  if (!token) token = resolveToken();
   const sid = newestSession(); if (!sid) throw new Error('no session to rotate');
   const { snap, handoff, turns, srcChars } = await makeHandoff(sid, token);
   console.log(`snapshot: ${turns} turns (${srcChars} chars) → handoff ${handoff.length} chars`);
   console.log(`\x1b[2m${snap}\x1b[0m`);
   console.log(`starting a fresh session, seeded with the handoff (clean window)…`);
-  const env = token ? { ...process.env, CLAUDE_CODE_OAUTH_TOKEN: token } : process.env;
+  const env = { ...process.env, CLAUDE_CODE_OAUTH_TOKEN: token || '' };
   const seed = `We are continuing earlier work. Handoff from the previous session:\n\n${handoff}\n\nContinue from the next step.`;
   return spawnSync('claude', [seed], { stdio:'inherit', env });
 }

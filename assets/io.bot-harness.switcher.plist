@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>io.bot-harness.switcher</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/sh</string><string>-c</string>
+    <string>f="$HOME/.bot-harness/pending-switch"; [ -f "$f" ] || exit 0; p=$(cat "$f"); rm -f "$f"; sleep 8; kill "$p" 2>/dev/null</string>
+  </array>
+  <key>WatchPaths</key><array><string>$HOME/.bot-harness/pending-switch</string></array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardErrorPath</key><string>/tmp/bot-harness-switcher.log</string>
+</dict></plist>

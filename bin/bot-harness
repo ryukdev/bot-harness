@@ -51,9 +51,9 @@ async function main(){
         const { findRemoteServerPid } = await import('../src/app-seat.mjs');
         const srv = findRemoteServerPid();
         if (srv && !rest.includes('--stage')){
-          console.log(`  \x1b[2mrefreshing in ~10s — you'll briefly disconnect, tap retry, and continue in this same chat\x1b[0m`);
-          const { spawn } = await import('node:child_process');
-          spawn('sh',['-c',`sleep 12; kill ${srv} 2>/dev/null`],{ detached:true, stdio:'ignore' }).unref();
+          console.log(`  \x1b[2mreconnecting…\x1b[0m`);
+          const { writeFileSync: wf } = await import('node:fs');
+          wf(`${process.env.HOME}/.bot-harness/pending-switch`, String(srv));
         } else {
           console.log(`  \x1b[2mreconnect once to continue in this same chat\x1b[0m`);
         }
@@ -74,9 +74,9 @@ async function main(){
     if (rest.includes('--stage')){ console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m(staged — restart to apply)\x1b[0m`); return; }
     const srv = findRemoteServerPid();
     if (srv){
-      console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m· switching in ~10s — you'll briefly disconnect, tap retry, and be back on ${email}\x1b[0m`);
-      const { spawn } = await import('node:child_process');
-      spawn('sh',['-c',`sleep 12; kill ${srv} 2>/dev/null`],{ detached:true, stdio:'ignore' }).unref();
+      console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m· reconnecting…\x1b[0m`);
+      const { writeFileSync: wf } = await import('node:fs');
+      wf(`${process.env.HOME}/.bot-harness/pending-switch`, String(srv));
     } else {
       console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m(restart the session to apply)\x1b[0m`);
     }

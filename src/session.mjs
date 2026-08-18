@@ -62,3 +62,29 @@ export async function rotate(token = null){
   const seed = `We are continuing earlier work. Handoff from the previous session:\n\n${handoff}\n\nContinue from the next step.`;
   return spawnSync('claude', [seed], { stdio:'inherit', env });
 }
+
+// ── rotateInPlace — ANGLE 1: same id, fresh context (the transcript-swap). Native auto-compact
+// already rewrites the transcript under a live id, proving the app tolerates it; this does the same
+// from outside, but seeds a STRUCTURED handoff instead of a lossy crush. Backup first, always.
+// Line shapes are CLONED from the real transcript (uuid/parent chain re-linked) so the format is
+// exactly what claude's own resume parser expects — never hand-invented.
+import { randomUUID } from 'node:crypto';
+export async function rotateInPlace(sessionId, token = null){
+  const path = transcriptPath(sessionId); if (!path) throw new Error(`transcript not found for ${sessionId}`);
+  const { handoff, turns } = await makeHandoff(sessionId, token);
+  const lines = readFileSync(path,'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  const uTpl = lines.find(j => j.type === 'user' && typeof j.message?.content === 'string');
+  const aTpl = lines.find(j => j.type === 'assistant');
+  if (!uTpl || !aTpl) throw new Error('no user/assistant template lines to clone');
+  const now = new Date().toISOString();
+  const uId = randomUUID(), aId = randomUUID();
+  const u = { ...uTpl, uuid: uId, parentUuid: null, promptId: randomUUID(), timestamp: now,
+    message: { role: 'user', content: `We are continuing earlier work in this same thread. Handoff from before the context rotation:\n\n${handoff}\n\nContinue from the next step.` } };
+  const a = { ...aTpl, uuid: aId, parentUuid: uId, timestamp: now,
+    message: { ...aTpl.message, role: 'assistant', content: [{ type: 'text', text: 'Got it — continuing from the handoff, with a fresh context window.' }] } };
+  const backup = `${path}.pre-rotate-${Date.now()}`;
+  writeFileSync(backup, readFileSync(path));
+  writeFileSync(path, JSON.stringify(u) + '\n' + JSON.stringify(a) + '\n');
+  return { backup, before: { turns, chars: readFileSync(backup,'utf8').length }, after: { chars: readFileSync(path,'utf8').length } };
+}
+

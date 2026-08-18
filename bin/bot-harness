@@ -39,9 +39,24 @@ async function main(){
     const r = resumeOn(token, session); process.exit(r.status ?? 0);
   }
   if (cmd === 'session'){
-    if (sub === 'rotate'){ await sessionRotate(); return; }
+    if (sub === 'rotate'){
+      if (rest.includes('--in-place')){
+        const { rotateInPlace } = await import('../src/session.mjs');
+        const { newestSession } = await import('../src/seat.mjs');
+        const sid = arg('resume') || newestSession();
+        const r = await rotateInPlace(sid);
+        const pct = Math.round(100 - r.after.chars/r.before.chars*100);
+        console.log(`\x1b[1msame id ${sid.slice(0,8)}… · context ${Math.round(r.before.chars/4000)}k → ${(r.after.chars/4000).toFixed(1)}k tokens (${pct}% reclaimed)\x1b[0m`);
+        console.log(`\x1b[2mreconnect/restart the session — it resumes fresh from the handoff · backup: ${r.backup.split('/').pop()}\x1b[0m`);
+        return;
+      }
+      await sessionRotate(); return; }
     if (sub === 'snapshot'){ const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const r=await makeHandoff(sid); console.log(`snapshot: ${r.turns} turns → ${r.snap}\n\n${r.handoff}`); return; }
-    const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid); console.log(p?`current session ${sid.slice(0,8)}… · ${readTurns(p,9999).length} turns on disk`:'no session here'); return;
+    const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid);
+    if (!p) { console.log('no session here'); return; }
+    const { readFileSync } = await import('node:fs');
+    const chars = readFileSync(p,'utf8').length; const tok = Math.round(chars/4); const pct = Math.min(99, Math.round(tok/200000*100));
+    console.log(`${sid.slice(0,8)}… · ${readTurns(p,9999).length} turns · ~${(tok/1000).toFixed(0)}k in context (${pct}% of window)`); return;
   }
   if (cmd === 'switch'){
     const email = sub; if (!email) return die('usage: bot-harness switch <email> [--stage]');

@@ -32,3 +32,14 @@ underneath" is only possible when the window is a VIEW of a DB thread — that i
 Every wall here (restart to switch account, new window to rotate session, no mobile, one seat per
 machine) is a process/file limit of native Claude Code. Each is precisely what a database-backed
 thread removes. bot-harness makes the desktop experience better; sharingu makes it seamless.
+
+## 6 · The transcript-swap works — same id, fresh context (VERIFIED)
+Native auto-compact rewrites the transcript under a live id — so an EXTERNAL swap does too. Verified
+end-to-end: cloned a real 800KB session under a fresh UUID, `rotate --in-place` swapped it to a 4KB
+handoff-seeded transcript (line shapes CLONED from real lines, uuid chain re-linked, same sessionId),
+and `claude -p --resume <id>` loaded the fresh transcript and continued from the handoff's next step.
+99.5% of the context reclaimed, id unchanged. Gotchas that cost time: the session id must be a real
+UUID (resume rejects non-UUID ids), and resume looks in `CLAUDE_CONFIG_DIR` — a machine with multiple
+profiles must point at the profile that owns the transcript. Remaining unknown: whether the desktop
+app's WINDOW re-renders the fresh transcript on reconnect (the ccd-cli resume layer is proven; the
+window repaint needs one visual check). Backup is always written before the swap.

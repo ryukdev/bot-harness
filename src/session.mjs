@@ -46,7 +46,10 @@ export async function makeHandoff(sessionId, token = null){
   const convo = turns.map(t => `${t.role.toUpperCase()}: ${t.text.slice(0,600)}`).join('\n');
   const prompt = `Summarize this conversation into a concise HANDOFF a fresh session can continue from — the goal, key decisions made, current state, and the immediate next step. Be specific and brief.\n\n${convo}`;
   const env = { ...process.env, CLAUDE_CODE_OAUTH_TOKEN: token || '' };
-  const { stdout } = await ex('claude', ['-p', prompt, '--model','sonnet'], { env, timeout: 120000, maxBuffer: 20*1024*1024 });
+  // --no-session-persistence: without it this handoff call writes its OWN transcript into the user's
+  // project dir. That stray is newest-by-mtime until rotateInPlace writes the real one, so any failure
+  // between the two leaves `session status` reporting the PHANTOM session's id instead of the real one.
+  const { stdout } = await ex('claude', ['-p', prompt, '--model','sonnet', '--no-session-persistence'], { env, timeout: 120000, maxBuffer: 20*1024*1024 });
   mkdirSync(SNAP_DIR, { recursive: true });
   const snap = join(SNAP_DIR, `${sessionId}.md`); writeFileSync(snap, stdout);
   return { snap, handoff: stdout.trim(), turns: turns.length, srcChars: convo.length };

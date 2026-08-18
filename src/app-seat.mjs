@@ -29,3 +29,11 @@ export async function run(sub, rest){
   let n=0; for (const v of versions()) if (v.big && !v.shimmed){ renameSync(v.p, `${v.p}.real`); writeFileSync(v.p, SHIM, {mode:0o755}); chmodSync(v.p,0o755); n++; }
   console.log(`app: seat → ${email} · ${n} version(s) shimmed · reconnect the app and its sessions run on ${email}`);
 }
+
+export function setSeatFor(email){
+  const row = load().find(r => r.email === email);
+  if (!row) throw new Error(`no account ${email} in the pool`);
+  writeSeat(row.token);
+  let n=0; for (const v of versions()) if (v.big && !v.shimmed){ renameSync(v.p, `${v.p}.real`); writeFileSync(v.p, SHIM, {mode:0o755}); chmodSync(v.p,0o755); n++; }
+  return { email, newlyShimmed: n };
+}

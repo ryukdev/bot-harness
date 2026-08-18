@@ -43,9 +43,17 @@ async function main(){
     if (sub === 'snapshot'){ const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const r=await makeHandoff(sid); console.log(`snapshot: ${r.turns} turns → ${r.snap}\n\n${r.handoff}`); return; }
     const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid); console.log(p?`current session ${sid.slice(0,8)}… · ${readTurns(p,9999).length} turns on disk`:'no session here'); return;
   }
+  if (cmd === 'switch'){
+    const email = sub; if (!email) return die('usage: bot-harness switch <email>');
+    const { setSeatFor } = await import('../src/app-seat.mjs');
+    setSeatFor(email);
+    console.log(`\x1b[1mseat set → ${email}\x1b[0m`);
+    console.log(`\x1b[2mreconnect the desktop app (one click) — this thread comes back on ${email}\x1b[0m`);
+    return;
+  }
   if (cmd === 'app'){ const { run } = await import('../src/app-seat.mjs'); return run(sub, rest); }
   if (cmd === 'doctor'){ const { doctor } = await import('../doctor.mjs'); return doctor(); }
-  die('bot-harness token|status|seat|session|app|config|doctor');
+  die('bot-harness token|status|seat|switch|session|app|config|doctor');
 }
 function die(m){ console.error(m); process.exit(1); }
 main().catch(e => die(String(e.message||e)));

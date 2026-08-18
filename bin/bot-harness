@@ -46,8 +46,9 @@ async function main(){
         const sid = arg('resume') || newestSession();
         const r = await rotateInPlace(sid);
         const pct = Math.round(100 - r.after.chars/r.before.chars*100);
-        console.log(`\x1b[1msame id ${sid.slice(0,8)}… · context ${Math.round(r.before.chars/4000)}k → ${(r.after.chars/4000).toFixed(1)}k tokens (${pct}% reclaimed)\x1b[0m`);
-        console.log(`\x1b[2mreconnect/restart the session — it resumes fresh from the handoff · backup: ${r.backup.split('/').pop()}\x1b[0m`);
+        console.log(`\x1b[1m✓ context refreshed — same chat, work carried over\x1b[0m`);
+        console.log(`  memory used: ${Math.round(r.before.chars/4000)}k → ${(r.after.chars/4000).toFixed(1)}k  \x1b[2m(${pct}% freed)\x1b[0m`);
+        console.log(`  \x1b[2mreconnect once to continue in this same chat\x1b[0m`);
         return;
       }
       await sessionRotate(); return; }
@@ -56,7 +57,7 @@ async function main(){
     if (!p) { console.log('no session here'); return; }
     const { readFileSync } = await import('node:fs');
     const chars = readFileSync(p,'utf8').length; const tok = Math.round(chars/4); const pct = Math.min(99, Math.round(tok/200000*100));
-    console.log(`${sid.slice(0,8)}… · ${readTurns(p,9999).length} turns · ~${(tok/1000).toFixed(0)}k in context (${pct}% of window)`); return;
+    console.log(`session ${sid.slice(0,8)} · memory used: ~${(tok/1000).toFixed(0)}k of 200k (${pct}% full)`); return;
   }
   if (cmd === 'switch'){
     const email = sub; if (!email) return die('usage: bot-harness switch <email> [--stage]');

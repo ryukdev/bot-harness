@@ -37,3 +37,17 @@ export function setSeatFor(email){
   let n=0; for (const v of versions()) if (v.big && !v.shimmed){ renameSync(v.p, `${v.p}.real`); writeFileSync(v.p, SHIM, {mode:0o755}); chmodSync(v.p,0o755); n++; }
   return { email, newlyShimmed: n };
 }
+
+// findRemoteServerPid — walk up this process's parents to the desktop app's remote server
+// (~/.claude/remote/srv/…). Killing it drops the app's connection so the app reconnects — spawning a
+// fresh session THROUGH the shim, on the new seat. This is the "auto-disconnect from the VM" that makes
+// a seat switch actually take effect without a manual disconnect.
+export function findRemoteServerPid(startPid = process.pid){
+  let pid = String(startPid);
+  for (let i = 0; i < 8 && pid && pid !== '1'; i++){
+    let cmd = ''; try { cmd = execFileSync('ps',['-o','command=','-p',pid],{encoding:'utf8'}); } catch {}
+    if (/remote\/srv\//.test(cmd)) return Number(pid);
+    try { pid = execFileSync('ps',['-o','ppid=','-p',pid],{encoding:'utf8'}).trim(); } catch { return null; }
+  }
+  return null;
+}

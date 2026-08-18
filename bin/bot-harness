@@ -44,19 +44,13 @@ async function main(){
     const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid); console.log(p?`current session ${sid.slice(0,8)}… · ${readTurns(p,9999).length} turns on disk`:'no session here'); return;
   }
   if (cmd === 'switch'){
-    const email = sub; if (!email) return die('usage: bot-harness switch <email> [--dry]');
-    const { setSeatFor, findRemoteServerPid } = await import('../src/app-seat.mjs');
+    const email = sub; if (!email) return die('usage: bot-harness switch <email>');
+    const { setSeatFor } = await import('../src/app-seat.mjs');
     setSeatFor(email);
-    console.log(`\x1b[1mseat set → ${email}\x1b[0m`);
-    const srv = findRemoteServerPid();
-    if (rest.includes('--dry')){ console.log(`\x1b[2m(dry) would auto-disconnect app server pid ${srv||'none-found'} so it reconnects on ${email}\x1b[0m`); return; }
-    if (srv){
-      console.log(`\x1b[2mdisconnecting the app so it reconnects on ${email}… (reconnect is automatic; one click if the app does not auto-catch)\x1b[0m`);
-      const { spawn } = await import('node:child_process');
-      spawn('sh',['-c',`sleep 2; kill ${srv} 2>/dev/null`],{ detached:true, stdio:'ignore' }).unref();
-    } else {
-      console.log(`\x1b[2mno app server found from here — reconnect the desktop app once to switch onto ${email}\x1b[0m`);
-    }
+    console.log(`\x1b[1mseat staged → ${email}\x1b[0m`);
+    console.log(`\x1b[2mthe account is bound to the session PROCESS — to switch this thread onto ${email},`);
+    console.log(`RESTART the session: close & reopen this thread (or quit+relaunch the app). A plain`);
+    console.log(`reconnect reuses the same process and stays on the old account. After restart: bot-harness status\x1b[0m`);
     return;
   }
   if (cmd === 'app'){ const { run } = await import('../src/app-seat.mjs'); return run(sub, rest); }

@@ -64,6 +64,24 @@ never acquires or transmits credentials.
 - **The honest limit:** switches happen at process birth — one reconnect per swap,
   and the Claude **mobile** app just disconnects. That's physics of processes.
 
+## What it does NOT do yet — and where sharingu takes over
+
+bot-harness is honest about its edges. Every one is a process limit, and every
+one is exactly what a database-backed thread fixes.
+
+| today, with bot-harness | tomorrow, with sharingu |
+|---|---|
+| one **reconnect** per swap (not zero-click) | seats rotate **while you type**, announced |
+| **no mobile** — the Claude mobile app drops on a switch | any **phone browser**, no reconnect |
+| **artifacts** need your own tailnet (an addon) | **native** output serving, built in |
+| switches **accounts** only | **smart routing across N models, LLMs & harnesses** |
+| **session rotation** is coming (v0.2) | sessions refresh **mid-thread**, backed by a real spine |
+
+Same idea, two depths: bot-harness keeps your thread alive across accounts on
+your machine; **sharingu** makes seats, sessions, models and harnesses all
+swap seamlessly underneath one thread — because the thread lives in a database,
+not a process.
+
 ## The upgrade → sharingu
 
 For seats **and** sessions that rotate *while you type* — announced, and on any

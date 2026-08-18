@@ -3,13 +3,15 @@
 import { load, upsert, remove, emails } from '../src/accounts.mjs';
 import { probeAll } from '../src/prober.mjs';
 import { pickHealthy } from '../src/router.mjs';
+import { get as getConfig, setModel } from '../src/config.mjs';
 import { newestSession, resumeOn } from '../src/seat.mjs';
 import { currentEmail } from '../src/whoami.mjs';
 const [cmd, sub, ...rest] = process.argv.slice(2);
 const arg = (f) => { const i = rest.indexOf(`--${f}`); return i>-1 ? rest[i+1] : null; };
-const tier = arg('tier') || 'premium';
+const model = arg('model') || getConfig().model;
 
 async function main(){
+  if (cmd === 'config'){ if (sub==='model' && rest[0]){ console.log(`✓ model → ${setModel(rest[0])}`); return; } console.log(`model: ${getConfig().model}`); return; }
   if (cmd === 'token'){
     if (sub === 'add' || sub === 'update'){ const [email, token] = rest; if (!email || !token) return die('usage: bot-harness token add <email> <token>');
       const n = upsert(email, token); console.log(`✓ ${email} saved (${n} account${n>1?'s':''} in the pool)`); return; }
@@ -17,8 +19,8 @@ async function main(){
       console.log(remove(email) ? `✓ removed ${email}` : `not found: ${email}`); return; }
     if (sub === 'list' || !sub){
       const rows = load(); if (!rows.length) return console.log('no accounts yet — bot-harness token add <email> <token>');
-      console.log(`probing ${rows.length} account(s) on the ${tier} tier…`);
-      await probeAll(rows, tier, r => console.log(`  ${r.ok?'\x1b[32m✓\x1b[0m':'\x1b[31m✗\x1b[0m'} ${r.email.padEnd(28)} \x1b[2m${r.why}\x1b[0m`)); return; }
+      console.log(`probing ${rows.length} account(s) for ${model}…`);
+      await probeAll(rows, model, r => console.log(`  ${r.ok?'\x1b[32m✓\x1b[0m':'\x1b[31m✗\x1b[0m'} ${r.email.padEnd(28)} \x1b[2m${r.why}\x1b[0m`)); return; }
     return die('token: add | update | remove | list');
   }
   if (cmd === 'status' || cmd === 'whoami'){
@@ -27,8 +29,8 @@ async function main(){
   }
   if (cmd === 'seat'){
     const here = currentEmail().email;
-    console.log(`probing your accounts on the ${tier} tier…`);
-    const { email, results } = await pickHealthy(tier, { exclude: here && here!=='not-in-pool' ? [] : [], onResult: r => console.log(`  ${r.ok?'\x1b[32m✓\x1b[0m':'\x1b[31m✗\x1b[0m'} ${r.email} \x1b[2m${r.why}\x1b[0m`) });
+    console.log(`probing your accounts for ${model}…`);
+    const { email, results } = await pickHealthy(model, { exclude: here && here!=='not-in-pool' ? [] : [], onResult: r => console.log(`  ${r.ok?'\x1b[32m✓\x1b[0m':'\x1b[31m✗\x1b[0m'} ${r.email} \x1b[2m${r.why}\x1b[0m`) });
     if (!email) return die(`no account has ${tier} headroom right now`);
     const token = load().find(r => r.email===email).token;
     const session = arg('resume') || newestSession();
@@ -37,7 +39,7 @@ async function main(){
   }
   if (cmd === 'app'){ const { run } = await import('../src/app-seat.mjs'); return run(sub, rest); }
   if (cmd === 'doctor'){ const { doctor } = await import('../doctor.mjs'); return doctor(); }
-  die('bot-harness token|status|seat|app|doctor');
+  die('bot-harness token|status|seat|app|config|doctor');
 }
 function die(m){ console.error(m); process.exit(1); }
 main().catch(e => die(String(e.message||e)));

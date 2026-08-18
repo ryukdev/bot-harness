@@ -1,71 +1,78 @@
 # bot-harness 🪑
 
-**one thread. many accounts. never a break.** — keep your Claude Code desktop
-session alive when an account runs dry, by switching to another account you own
-and resuming the *same* conversation. No new chat, no re-login.
+**one thread. many accounts. never a break.**
 
+Keep your Claude Code session alive when an account runs out of room on the
+model you use — by switching to another account *you own* and resuming the
+**same conversation**. No new chat, no re-login. Works with **any Claude model**.
+
+![demo](assets/demo.svg)
+
+## How it works
+
+![how it works](assets/how-it-works.svg)
+
+A Claude Code session's account is fixed the instant its process starts — the
+desktop app injects its token before any shell runs, so nothing on your machine
+can choose it. But the conversation is a local, **account-agnostic transcript**:
+`claude --resume <id>` under another account continues the same thread. So
+bot-harness picks a healthy account from your pool and re-opens your thread on it.
+
+## Install
+
+```bash
+git clone https://github.com/ryukdev/bot-harness ~/.bot-harness-src
+ln -sf ~/.bot-harness-src/bin/bot-harness /usr/local/bin/bot-harness
+bot-harness doctor
 ```
-  ● you: hit the Fable limit on account A
-  │
-  ● bot-harness seat → probes your accounts → account B has headroom
-  │
-  ● resume the same thread on account B → Fable answers
-  ✓ same conversation, new payer, zero logins
-```
 
-**Your accounts, your machine, your thread.** bot-harness never creates or
-uploads anything — it gathers the Claude accounts you already have into one
-pool, probes which has headroom on the model tier you need (quota isn't
-queryable — you have to ask), and re-opens your current thread on a healthy one.
+No build, no dependencies — plain node (18+) and the `claude` CLI.
 
-## Setup prompt
-
-Paste into Claude Code:
+Or paste this into Claude Code and let it set itself up:
 
 ```text
-Clone https://github.com/ryukdev/bot-harness into ~/.bot-harness-src (its home),
-read install.md, install it so `bot-harness` is a command on my PATH, register
-it as a skill named bot-harness using SKILL.md as the body, then read
-onboarding.md and walk me through adding my accounts.
+Clone https://github.com/ryukdev/bot-harness into ~/.bot-harness-src, read
+install.md, install it so `bot-harness` is on my PATH, register it as a skill
+named bot-harness using SKILL.md, then walk me through onboarding.
 ```
 
 ## Use
 
 ```bash
-bot-harness token add  you@work.com   sk-ant-oat-…   # add each account (paste token)
-bot-harness token list                               # emails + who has headroom now
-bot-harness status                                   # which account THIS session pays
-bot-harness seat                                     # switch this thread to a healthy account
-bot-harness app on                                   # make the DESKTOP APP pick a healthy seat on reconnect
-bot-harness doctor                                   # verify the chain
+bot-harness config model opus            # the model whose limit you actually hit (any Claude model)
+bot-harness token add you@work.com  sk-… # add each account you own (paste the token)
+bot-harness token list                   # your emails + who has headroom right now
+bot-harness status                       # which account THIS session is paying
+bot-harness seat                         # switch this thread to a healthy account
+bot-harness app on                       # make the DESKTOP APP pick a healthy seat on reconnect
 ```
 
-## Why this works
-
-A Claude Code session's account is fixed the instant its process starts — the
-desktop app injects its token before any shell runs, so no machine config can
-select it. But the conversation is a local, account-agnostic transcript:
-`claude --resume <id>` under another account continues the same thread. So
-bot-harness picks a healthy account from your pool and re-opens the thread on it.
-
-`bot-harness app on` handles the desktop app, whose remote CLI ignores the
-machine: it wraps the app's CLI path with a tiny shim that swaps in the chosen
-seat before the real binary starts. Restore anytime with `bot-harness app off`.
-
-## The honest limit → the upgrade
-
-The switch happens at **process birth** — so each swap costs one reconnect, and
-on the Claude **mobile** app it just disconnects. That's physics of processes.
-
-For seats *and* sessions that rotate **while you type** — announced, and on any
-phone browser with no reconnect — you need a thread that lives in a database, not
-a process. That's a stronger spine: **[sharingu](https://github.com/ryukdev/sharingu)**.
-bot-harness is the wedge; sharingu is where the limit stops existing.
-
-## Safety
-
 Your tokens live only in `~/.bot-harness/accounts.json` (chmod 600) — never
-printed, never committed, never sent anywhere. bot-harness stores and routes;
-it never acquires or transmits credentials.
+printed, never committed, never sent anywhere. bot-harness stores and routes; it
+never acquires or transmits credentials.
 
-MIT.
+## Architecture
+
+![architecture](assets/architecture.svg)
+
+- **Core** (standalone): your account pool → the prober asks each account whether
+  it has headroom on your model → the router picks a healthy one → `seat` resumes
+  the thread there. `app on` shims the desktop app so its sessions pick a healthy
+  seat on reconnect; `app off` restores.
+- **Addon** (optional): serve your outputs on your own tailnet — a link that opens
+  with no login. Absent, it falls back to a local file. Never required.
+- **The honest limit:** switches happen at process birth — one reconnect per swap,
+  and the Claude **mobile** app just disconnects. That's physics of processes.
+
+## The upgrade → sharingu
+
+For seats **and** sessions that rotate *while you type* — announced, and on any
+phone browser with no reconnect — you need a thread that lives in a database, not
+a process. That's a stronger spine:
+**[sharingu](https://github.com/ryukdev/sharingu)**.
+
+bot-harness is the wedge. sharingu is where the limit stops existing.
+
+---
+
+MIT · built by [ryukdev](https://github.com/ryukdev)

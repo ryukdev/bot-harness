@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="430" viewBox="0 0 760 430" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+  <rect width="760" height="430" rx="12" fill="#16161e"/>
+  <rect width="760" height="40" rx="12" fill="#1f2029"/><rect y="28" width="760" height="12" fill="#1f2029"/>
+  <circle cx="24" cy="20" r="6" fill="#ff5f56"/><circle cx="46" cy="20" r="6" fill="#ffbd2e"/><circle cx="68" cy="20" r="6" fill="#27c93f"/>
+  <text x="380" y="25" fill="#6a6f87" font-size="13" text-anchor="middle">bot-harness — one thread, many accounts</text>
+  <text font-size="15" xml:space="preserve">
+    <tspan x="24" y="80" fill="#7aa2f7">$</tspan><tspan fill="#c0caf5"> bot-harness token list</tspan>
+    <tspan x="24" y="106" fill="#565f89">probing 3 accounts for opus-4…</tspan>
+    <tspan x="44" y="132" fill="#9ece6a">✓</tspan><tspan fill="#c0caf5">  you@personal.com</tspan><tspan x="360" fill="#565f89">opus-4 ✓</tspan>
+    <tspan x="44" y="158" fill="#f7768e">✗</tspan><tspan fill="#c0caf5">  you@work.com</tspan><tspan x="360" fill="#565f89">no headroom</tspan>
+    <tspan x="44" y="184" fill="#9ece6a">✓</tspan><tspan fill="#c0caf5">  team@company.com</tspan><tspan x="360" fill="#565f89">opus-4 ✓</tspan>
+    <tspan x="24" y="232" fill="#7aa2f7">$</tspan><tspan fill="#c0caf5"> bot-harness status</tspan>
+    <tspan x="24" y="258" fill="#c0caf5">this session is paying: </tspan><tspan fill="#f7768e">you@work.com</tspan><tspan fill="#565f89">  (drained)</tspan>
+    <tspan x="24" y="306" fill="#7aa2f7">$</tspan><tspan fill="#c0caf5"> bot-harness seat</tspan>
+    <tspan x="24" y="332" fill="#565f89">probing your accounts for opus-4…</tspan>
+    <tspan x="24" y="358" fill="#c0caf5">seat → </tspan><tspan fill="#9ece6a">you@personal.com</tspan><tspan fill="#565f89"> · resuming a1b2c3d4…</tspan>
+    <tspan x="24" y="392" fill="#9ece6a">✓ same conversation, new account, zero logins</tspan>
+  </text>
+</svg>

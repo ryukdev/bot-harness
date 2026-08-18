@@ -22,8 +22,8 @@ export async function run(sub, rest){
   if (sub === 'off'){ let n=0; for (const v of versions()) if (existsSync(`${v.p}.real`)){ try{unlinkSync(v.p);}catch{} renameSync(`${v.p}.real`, v.p); n++; } return console.log(`app: restored ${n} binary(ies) — the app's own account is back`); }
   if (sub === 'status'){ return console.log(`app shim: ${shimmed()?'installed':'not installed'} · versions: ${versions().length}`); }
   // default: on — pick a healthy seat, write it, shim every version
-  const tier = 'premium';
-  const { email } = await pickHealthy(tier, { onResult: r => console.log(`  ${r.ok?'✓':'✗'} ${r.email} ${r.why}`) });
+  
+  const { email } = await pickHealthy(null, { onResult: r => console.log(`  ${r.ok?'✓':'✗'} ${r.email} ${r.why}`) });
   if (!email) return console.error('app: no account has headroom to seat');
   writeSeat(load().find(r=>r.email===email).token);
   let n=0; for (const v of versions()) if (v.big && !v.shimmed){ renameSync(v.p, `${v.p}.real`); writeFileSync(v.p, SHIM, {mode:0o755}); chmodSync(v.p,0o755); n++; }

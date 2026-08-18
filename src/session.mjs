@@ -8,6 +8,16 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { newestSession } from './seat.mjs';
+import { currentEmail } from './whoami.mjs';
+import { tokenFor, load } from './accounts.mjs';
+
+// resolveToken — the claude -p subprocess needs a REAL token; the ambient env may have none (learned
+// 2026-08-18: nested claude in a shimmed session had no token → 'Not logged in'). Prefer THIS session's
+// account, else any pool account.
+function resolveToken(){
+  try { const { email } = currentEmail(); if (email && email !== 'not-in-pool'){ const t = tokenFor(email); if (t) return t; } } catch {}
+  const rows = load(); return rows[0] ? rows[0].token : null;
+}
 const ex = promisify(execFile);
 const SNAP_DIR = join(homedir(), '.bot-harness', 'snapshots');
 
@@ -30,11 +40,12 @@ export function readTurns(path, limit = 40){
   return out.slice(-limit);
 }
 export async function makeHandoff(sessionId, token = null){
+  if (!token) token = resolveToken();
   const path = transcriptPath(sessionId); if (!path) throw new Error(`transcript not found for ${sessionId}`);
   const turns = readTurns(path);
   const convo = turns.map(t => `${t.role.toUpperCase()}: ${t.text.slice(0,600)}`).join('\n');
   const prompt = `Summarize this conversation into a concise HANDOFF a fresh session can continue from — the goal, key decisions made, current state, and the immediate next step. Be specific and brief.\n\n${convo}`;
-  const env = token ? { ...process.env, CLAUDE_CODE_OAUTH_TOKEN: token } : process.env;
+  const env = { ...process.env, CLAUDE_CODE_OAUTH_TOKEN: token || '' };
   const { stdout } = await ex('claude', ['-p', prompt, '--model','sonnet'], { env, timeout: 120000, maxBuffer: 20*1024*1024 });
   mkdirSync(SNAP_DIR, { recursive: true });
   const snap = join(SNAP_DIR, `${sessionId}.md`); writeFileSync(snap, stdout);

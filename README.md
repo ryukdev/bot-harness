@@ -133,6 +133,10 @@ work can branch off it. What makes it an agent is that its identity survives.
 That's the idea we're taking further in [sharingu](https://sharingu.ryuklabs.io) — threads that
 don't live in a process at all. This tool stands on its own; that one is where it goes next.
 
+If you want the longer version — how every major harness already has the substrate for this, what a
+reconnect actually costs, and why an entire ecosystem of memory tools stepped around it — it's
+written up in **[Everyone is building memory. Nobody is keeping the thread.](docs/everyone-is-building-memory.md)**
+
 ## Contributing
 
 Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Found a security issue?

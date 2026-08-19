@@ -122,6 +122,7 @@ oversights, and no amount of work on this tool removes them.
 | one session rotates, **every session on that machine blinks** | they share one remote server process |
 | a thread lives on **one machine's** transcripts | the transcript is a local file, not a record |
 | switches **accounts** only | it routes credentials, not models or harnesses |
+| `/bug` fails in a seated session | the feedback endpoint refuses a seated credential — use a terminal session, or `bot-harness app off` |
 
 A thread that lived in a database instead of a process would have none of them.
 

@@ -93,3 +93,22 @@ So `session status` is honest immediately after `rotate --in-place` (we write th
 and context agree) and drifts high if Claude Code compacts the session on its own afterwards. The
 number is a good cost signal and a poor headroom gauge. Reporting it as "memory used" is fine;
 reporting it as "room left" would not be.
+
+## 9 · A seated session can't file feedback — `/bug` returns 403
+Found by trying to file a report from a seated session. `/bug` failed with `403: http_error`, and
+notably did **not** fall back to writing a local bundle in `~/.claude/feedback-bundles/` — so the
+request was authenticated and then refused, not treated as an unauthenticated client. The same
+report went through immediately from a native terminal session.
+
+The shim only rewrites `~/.claude/remote/ccd-cli/`, the app's remote CLI, so a terminal `claude`
+never uses a seated credential — it runs on the operator's own login. That is the difference
+between the two attempts.
+
+Most likely the seated credential (a long-lived token the user pasted) lacks the scope the feedback
+endpoint wants, where the app's own first-party session credential has it. **Not isolated**: the
+seated-token variable and the app-spawned-remote-session variable changed together, and separating
+them needs a run with `BOT_HARNESS_KEEP=1` on an otherwise identical remote session.
+
+Either way the user-facing fact holds: **install bot-harness and `/bug` stops working in your
+app-spawned sessions.** Workaround is a native terminal, or `bot-harness app off` and a full app
+restart. Documented rather than fixed, because the fix is upstream.

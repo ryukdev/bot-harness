@@ -20,7 +20,8 @@ recite them on every reply.)
 | user asks | run | reply (one line) |
 |---|---|---|
 | rotate / refresh the session, free up context | `bot-harness session rotate --in-place` | `context refreshed — same chat, work carried over · memory 14k → 0.7k (95% freed)` |
-| session id? how full? | `bot-harness session status` | `<id> · memory used: ~<n> of 200k` (a cost signal, not a headroom gauge — see LEARNINGS 8b) |
+| session id? how full? | `bot-harness session status` | `<id> · memory used: ~<n> of <window>` (a cost signal, not a headroom gauge — see LEARNINGS 8b/8c) |
+| I use the 1M context window | `bot-harness config window 1m` | `context window → 1M` |
 | switch to <name/email> | `bot-harness switch <email>` | `→ <email>` |
 | which account / fuel? | `bot-harness status` | the email |
 | what accounts do I have? | `bot-harness token list` | emails + who has headroom |

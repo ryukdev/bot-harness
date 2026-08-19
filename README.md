@@ -51,6 +51,7 @@ bot-harness status                        # which account THIS session is paying
 bot-harness token add you@work.com  sk-…  # add an account you own (paste the token)
 bot-harness token list                    # your emails + who has headroom right now
 bot-harness config model opus             # the model this pool is for (any Claude model)
+bot-harness config window 1m              # if you run the 1M context window (default: 200k)
 bot-harness mobile on                     # keep the thread on your phone across both operations
 ```
 
@@ -123,6 +124,7 @@ oversights, and no amount of work on this tool removes them.
 | a thread lives on **one machine's** transcripts | the transcript is a local file, not a record |
 | switches **accounts** only | it routes credentials, not models or harnesses |
 | `/bug` fails in a seated session | the feedback endpoint refuses a seated credential — use a terminal session, or `bot-harness app off` |
+| "how full" **assumes a 200k window** | Claude Code doesn't expose the session's window. On a 1M window a 200k denominator overstates fullness 5× — set `bot-harness config window 1m` |
 
 A thread that lived in a database instead of a process would have none of them.
 

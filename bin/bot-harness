@@ -3,16 +3,24 @@
 import { load, upsert, remove, emails, setLabel, display, resolve } from '../src/accounts.mjs';
 import { probeAll } from '../src/prober.mjs';
 import { pickHealthy } from '../src/router.mjs';
-import { get as getConfig, setModel } from '../src/config.mjs';
+import { get as getConfig, setModel, setWindow, DEFAULT_WINDOW } from '../src/config.mjs';
 import { newestSession, resumeOn } from '../src/seat.mjs';
 import { currentEmail } from '../src/whoami.mjs';
 import { rotate as sessionRotate, makeHandoff, transcriptPath, readTurns, conversationChars } from '../src/session.mjs';
 const [cmd, sub, ...rest] = process.argv.slice(2);
+const fmtWin = (n) => n >= 1e6 ? `${(n/1e6).toString().replace(/\.0$/,'')}M` : `${Math.round(n/1000)}k`;
 const arg = (f) => { const i = rest.indexOf(`--${f}`); return i>-1 ? rest[i+1] : null; };
 const model = arg('model') || getConfig().model;
 
 async function main(){
-  if (cmd === 'config'){ if (sub==='model' && rest[0]){ console.log(`✓ model → ${setModel(rest[0])}`); return; } console.log(`model: ${getConfig().model}`); return; }
+  if (cmd === 'config'){
+    if (sub==='model' && rest[0]){ console.log(`✓ model → ${setModel(rest[0])}`); return; }
+    if (sub==='window'){ if (!rest[0]) return die('usage: bot-harness config window <200k|1m|200000>');
+      const n = setWindow(rest[0]); console.log(`✓ context window → ${fmtWin(n)}`); return; }
+    const c = getConfig();
+    console.log(`model:  ${c.model}`);
+    console.log(`window: ${fmtWin(c.window)}${c.window===DEFAULT_WINDOW?' \x1b[2m(assumed — Claude Code does not expose it; set it with: bot-harness config window 1m)\x1b[0m':''}`);
+    return; }
   if (cmd === 'token'){
     if (sub === 'add' || sub === 'update'){ const [email, token] = rest; if (!email || !token) return die('usage: bot-harness token add <email> <token>');
       const n = upsert(email, token); console.log(`✓ ${email} saved (${n} account${n>1?'s':''} in the pool)`); return; }
@@ -74,8 +82,9 @@ async function main(){
     if (sub === 'snapshot'){ const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const r=await makeHandoff(sid); console.log(`snapshot: ${r.turns} turns → ${r.snap}\n\n${r.handoff}`); return; }
     const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid);
     if (!p) { console.log('no session here'); return; }
-    const chars = conversationChars(p); const tok = Math.round(chars/4); const pct = Math.min(99, Math.round(tok/200000*100));
-    console.log(`session ${sid.slice(0,8)} · memory used: ~${(tok/1000).toFixed(0)}k of 200k (${pct}% full)`); return;
+    const win = getConfig().window;
+    const chars = conversationChars(p); const tok = Math.round(chars/4); const pct = Math.min(99, Math.round(tok/win*100));
+    console.log(`session ${sid.slice(0,8)} · memory used: ~${(tok/1000).toFixed(0)}k of ${fmtWin(win)} (${pct}% full)`); return;
   }
   if (cmd === 'switch'){
     if (!sub) return die('usage: bot-harness switch <account> [--stage]   (an email, or a label if you set one)');

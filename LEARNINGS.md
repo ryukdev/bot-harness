@@ -94,6 +94,20 @@ and context agree) and drifts high if Claude Code compacts the session on its ow
 number is a good cost signal and a poor headroom gauge. Reporting it as "memory used" is fine;
 reporting it as "room left" would not be.
 
+### 8c · …and a third: the denominator was a guess
+Asked why the demo said "of 200k", the answer was that `200000` was a literal in our own code. It is
+Claude Code's default window, so it is usually right — but on Opus 4.6+ / Sonnet 4.6+ the window can
+be switched to 1M, and against that the number overstates fullness by 5×.
+
+Claude Code exposes no way to ask: no config key, no env var, and the CLI only surfaces a range
+(`--autocompact` accepts 100k–1M). So it stays an assumption — now a stated and overridable one via
+`bot-harness config window 1m`, and labelled "(assumed)" in `config` output whenever it is the
+default.
+
+All three biases in this measurement pushed the same way: the number read *fuller* than reality.
+That is an uncomfortable direction for a tool whose demo depends on that number falling, which is
+exactly why each one is written down.
+
 ## 9 · A seated session can't file feedback — `/bug` returns 403
 Found by trying to file a report from a seated session. `/bug` failed with `403: http_error`, and
 notably did **not** fall back to writing a local bundle in `~/.claude/feedback-bundles/` — so the

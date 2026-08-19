@@ -8,4 +8,4 @@ labels: enhancement
 
 **What you'd like**
 
-**Anything else** — is this a process limit bot-harness can fix, or one that needs a database-backed thread (sharingu)?
+**Anything else** — is this something bot-harness can fix, or a limit of how Claude Code sessions work?

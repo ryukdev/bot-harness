@@ -42,5 +42,5 @@ user's own accounts — no relay, no proxy, nothing transmitted.
 
 Each operation costs one brief reconnect. Mobile survives an account switch on its own; a rotate
 re-registers Remote Control only when `bot-harness mobile on` is set, because rewriting the
-transcript archives the old remote session. Keeping the same window while the session rotates
-underneath needs a database-backed thread → sharingu. See LEARNINGS.md.
+transcript archives the old remote session. Every one of these is a property of a process, not a
+bug to be fixed here. See LEARNINGS.md.

@@ -26,12 +26,12 @@ The desktop app's chat window binds to a session ID = one transcript = one conte
 hold the window still while rotating the session underneath — they're welded. Native has only
 auto-compact (same window, lossy, in place) or a new session (fresh window). bot-harness rotation is
 the latter done well: snapshot → fresh session carrying the work. **"Same window, session rotates
-underneath" is only possible when the window is a VIEW of a DB thread — that is sharingu.**
+underneath" is only possible when the window is a VIEW of a database-backed thread.**
 
 ## 5 · The honest limit is the wedge
 Every wall here (restart to switch account, new window to rotate session, no mobile, one seat per
 machine) is a process/file limit of native Claude Code. Each is precisely what a database-backed
-thread removes. bot-harness makes the desktop experience better; sharingu makes it seamless.
+thread removes. bot-harness makes the desktop experience better; it cannot make it seamless.
 
 ## 6 · The transcript-swap works — same id, fresh context (VERIFIED)
 Native auto-compact rewrites the transcript under a live id — so an EXTERNAL swap does too. Verified

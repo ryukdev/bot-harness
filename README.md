@@ -96,18 +96,20 @@ right answer. bot-harness does the other one: it keeps **this** thread alive —
 chat — so there is nothing to extract and nothing to recall. Memory tools remember facts about your
 work; a handoff keeps the thread that *is* the work.
 
-## The honest limits — and where [sharingu](https://sharingu.ryuklabs.io) takes over
+## The honest limits
 
-Every limit below is a property of *processes*, and every one is what a database-backed thread
-removes.
+Every one of these is a property of a *process*, which is worth saying plainly: they aren't
+oversights, and no amount of work on this tool removes them.
 
-| today, with bot-harness | tomorrow, with sharingu |
+| the limit | why it exists |
 |---|---|
-| one **reconnect** per handoff | context and seats rotate **while you type** |
-| a rotate **re-registers** the phone rather than resuming it | the phone never re-pairs — the thread is a URL |
-| a thread lives on **one machine's** transcripts | the thread lives in a **database** |
-| one session rotates, **every session on that machine blinks** | one thread rotates, alone |
-| switches **accounts** only | smart routing across **N models & harnesses** |
+| one **reconnect** per handoff | the account is fixed at process start, so applying a change needs a restart |
+| a rotate **re-registers** your phone rather than resuming it | rewriting the transcript archives the old remote session |
+| one session rotates, **every session on that machine blinks** | they share one remote server process |
+| a thread lives on **one machine's** transcripts | the transcript is a local file, not a record |
+| switches **accounts** only | it routes credentials, not models or harnesses |
+
+A thread that lived in a database instead of a process would have none of them.
 
 ## The thing underneath all of it
 
@@ -126,10 +128,8 @@ the thing that knows your project — and you start treating it as an agent rath
 conversation. It doesn't need to be one unbroken scroll, and it doesn't need to live in one pane;
 work can branch off it. What makes it an agent is that its identity survives.
 
-[sharingu](https://sharingu.ryuklabs.io) is that idea without the process underneath: a thread that lives in a database, so
-context, accounts, sessions and models all rotate beneath it while it keeps going. One primitive,
-**continuous threads for everything.** bot-harness is the wedge; sharingu is where a session
-becomes a living thread.
+That's the idea we're taking further in [sharingu](https://sharingu.ryuklabs.io) — threads that
+don't live in a process at all. This tool stands on its own; that one is where it goes next.
 
 ## Contributing
 

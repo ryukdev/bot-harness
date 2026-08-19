@@ -24,6 +24,6 @@ export async function doctor(){
   let m; try { m = mobileStatus(); } catch { m = null; }
   console.log(`  ${m?.enabled?'\x1b[32m✓\x1b[0m':'\x1b[33m!\x1b[0m'} mobile continuity: ${m?.enabled?'on — a switch or rotate re-registers Remote Control by itself':'off — after a rotate the phone needs /remote-control again (bot-harness mobile on)'}`);
   console.log('\n  running on the LOCAL spine — each swap costs one reconnect.');
-  console.log('  \x1b[2mwant seats + sessions to rotate while you type, on any phone browser? that is a stronger spine → sharingu (https://sharingu.ryuklabs.io)\x1b[0m');
+  console.log('  \x1b[2meach swap costs one reconnect — that is a property of a process, not a bug. See the limits in the README.\x1b[0m');
 }
 if (import.meta.url === `file://${process.argv[1]}`) doctor();

@@ -1,7 +1,7 @@
 // session.mjs — SESSION ROTATION. Claude Code's own --resume reopens the FULL transcript, which is
 // what fills the context. So rotation is: snapshot the work into a compact handoff → start a FRESH
 // session (clean window) seeded with that handoff → continue. Continuity rides the snapshot, not the
-// session id. The snapshot here is light (a summary + the recent tail); sharingu's is a rich spine.
+// session id. The snapshot here is deliberately light — a summary plus the recent tail.
 import { execFile, spawnSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';

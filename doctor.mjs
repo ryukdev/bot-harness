@@ -7,7 +7,8 @@ export async function doctor(){
   console.log('bot-harness doctor');
   console.log(`  ${ok(has('node'))} node`);
   console.log(`  ${ok(has('claude'))} claude on PATH`);
-  const n = load().length; console.log(`  ${ok(n>0)} pool has ${n} account(s)`);
+  const n = load().length;
+  console.log(`  ${ok(n>0)} pool has ${n} account(s)${n ? '' : ' — add one: bot-harness token add <email> <token>  (see onboarding.md)'}`);
   let appShim = false; try { const { shimmed } = await import('./src/app-seat.mjs'); appShim = shimmed(); } catch {}
   console.log(`  ${ok(true)} desktop-app shim: ${appShim ? 'installed' : 'not installed (bot-harness app on)'}`);
   // conflict checks — the two things that silently pin the account (learned 2026-08-18):
@@ -23,7 +24,6 @@ export async function doctor(){
   const { status: mobileStatus } = await import('./src/mobile.mjs');
   let m; try { m = mobileStatus(); } catch { m = null; }
   console.log(`  ${m?.enabled?'\x1b[32m✓\x1b[0m':'\x1b[33m!\x1b[0m'} mobile continuity: ${m?.enabled?'on — a switch or rotate re-registers Remote Control by itself':'off — after a rotate the phone needs /remote-control again (bot-harness mobile on)'}`);
-  console.log('\n  running on the LOCAL spine — each swap costs one reconnect.');
-  console.log('  \x1b[2meach swap costs one reconnect — that is a property of a process, not a bug. See the limits in the README.\x1b[0m');
+  console.log('\n  \x1b[2meach swap costs one reconnect — a property of a process, not a bug. The limits are in the README.\x1b[0m');
 }
 if (import.meta.url === `file://${process.argv[1]}`) doctor();

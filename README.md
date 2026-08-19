@@ -1,5 +1,7 @@
 # bot-harness 🧵
 
+[![test](https://github.com/ryukdev/bot-harness/actions/workflows/test.yml/badge.svg)](https://github.com/ryukdev/bot-harness/actions/workflows/test.yml)
+
 **One project, one thread.**
 
 You work on one project, but the tool makes you work in a dozen chats — because the context filled,

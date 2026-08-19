@@ -29,8 +29,15 @@ async function main(){
     return die('token: add | update | label | remove | list');
   }
   if (cmd === 'status' || cmd === 'whoami'){
-    const { email } = currentEmail(); console.log(`this session is paying: \x1b[1m${email? display(email) : 'unknown'}\x1b[0m`);
-    console.log(`pool: ${load().map(display).join(' · ') || '(empty)'}`); return;
+    const { email } = currentEmail();
+    const shown = !email ? 'unknown — no credential found on this session'
+      : email === 'not-in-pool' ? 'an account that is not in your pool yet'
+      : display(email);
+    console.log(`this session is paying: \x1b[1m${shown}\x1b[0m`);
+    const pool = load();
+    console.log(pool.length ? `pool: ${pool.map(display).join(' · ')}`
+      : 'pool: empty — add an account with  bot-harness token add <email> <token>');
+    return;
   }
   if (cmd === 'seat'){
     const here = currentEmail().email;

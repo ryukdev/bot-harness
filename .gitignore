@@ -9,3 +9,4 @@ CLAUDE.md
 *.mov
 ac-kb.html
 *-kb.html
+.DS_Store

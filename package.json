@@ -1,7 +1,7 @@
 {
   "name": "bot-harness",
   "version": "0.1.0",
-  "description": "one thread, many Claude accounts — keep your Claude Code session alive across account switches",
+  "description": "one project, one thread \u2014 keep a Claude Code chat alive across context limits and across your own accounts",
   "type": "module",
   "bin": {
     "bot-harness": "bin/bot-harness"
@@ -13,10 +13,14 @@
   "keywords": [
     "claude",
     "claude-code",
+    "anthropic",
     "cli",
     "session",
-    "account",
-    "anthropic"
+    "context",
+    "continuity",
+    "thread",
+    "handoff",
+    "accounts"
   ],
   "repository": {
     "type": "git",

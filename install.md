@@ -8,7 +8,8 @@ ln -sf ~/.bot-harness-src/bin/bot-harness /usr/local/bin/bot-harness   # or add 
 bot-harness doctor
 ```
 
-No build step, no dependencies — plain node.
+No build step, no dependencies — plain node. Then [onboarding.md](onboarding.md) adds your
+accounts (two minutes).
 
 ## The switcher agent (desktop-app switches)
 
@@ -19,4 +20,11 @@ the new seat / fresh context. Install once:
 ```bash
 cp assets/io.bot-harness.switcher.plist ~/Library/LaunchAgents/
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/io.bot-harness.switcher.plist
+```
+
+## Optional, and worth it
+
+```bash
+bot-harness token label you@work.com "work"   # commands print "work", never your address
+bot-harness mobile on                          # the phone re-registers itself after a refresh
 ```

@@ -47,3 +47,9 @@ test('conversationChars survives an unparseable line', () => {
   writeFileSync(p, 'not json\n' + JSON.stringify({ type: 'user', message: {} }) + '\n');
   assert.ok(conversationChars(p) > 0, 'a corrupt line is counted, never thrown on');
 });
+
+test('the plugin ships the same skill as the repo root', () => {
+  const root = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
+  const plugin = readFileSync(new URL('../skills/thread-continuity/SKILL.md', import.meta.url), 'utf8');
+  assert.equal(plugin, root, 'skills/thread-continuity/SKILL.md has drifted from SKILL.md — copy it across');
+});

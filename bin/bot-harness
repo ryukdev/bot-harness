@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // bot-harness — one thread, many accounts, on Claude Code desktop. See README.md.
-import { load, upsert, remove, emails } from '../src/accounts.mjs';
+import { load, upsert, remove, emails, setLabel, display, resolve } from '../src/accounts.mjs';
 import { probeAll } from '../src/prober.mjs';
 import { pickHealthy } from '../src/router.mjs';
 import { get as getConfig, setModel } from '../src/config.mjs';
@@ -16,17 +16,21 @@ async function main(){
   if (cmd === 'token'){
     if (sub === 'add' || sub === 'update'){ const [email, token] = rest; if (!email || !token) return die('usage: bot-harness token add <email> <token>');
       const n = upsert(email, token); console.log(`✓ ${email} saved (${n} account${n>1?'s':''} in the pool)`); return; }
+    if (sub === 'label'){ const [email, ...rest2] = rest; if (!email) return die('usage: bot-harness token label <email> [label]   (omit the label to clear it)');
+      const set = setLabel(email, rest2.join(' '));
+      if (set === null && !load().some(r => r.email === email)) return die(`not in the pool: ${email}`);
+      console.log(set ? `✓ ${email} shows as ${set}` : `✓ ${email} shows as its email again`); return; }
     if (sub === 'remove'){ const [email] = rest; if (!email) return die('usage: bot-harness token remove <email>');
       console.log(remove(email) ? `✓ removed ${email}` : `not found: ${email}`); return; }
     if (sub === 'list' || !sub){
       const rows = load(); if (!rows.length) return console.log('no accounts yet — bot-harness token add <email> <token>');
       console.log(`probing ${rows.length} account(s) for ${model}…`);
       await probeAll(rows, model, r => console.log(`  ${r.ok?'\x1b[32m✓\x1b[0m':'\x1b[31m✗\x1b[0m'} ${r.email.padEnd(28)} \x1b[2m${r.why}\x1b[0m`)); return; }
-    return die('token: add | update | remove | list');
+    return die('token: add | update | label | remove | list');
   }
   if (cmd === 'status' || cmd === 'whoami'){
-    const { email } = currentEmail(); console.log(`this session is paying: \x1b[1m${email||'unknown'}\x1b[0m`);
-    console.log(`pool: ${emails().join(' · ') || '(empty)'}`); return;
+    const { email } = currentEmail(); console.log(`this session is paying: \x1b[1m${email? display(email) : 'unknown'}\x1b[0m`);
+    console.log(`pool: ${load().map(display).join(' · ') || '(empty)'}`); return;
   }
   if (cmd === 'seat'){
     const here = currentEmail().email;
@@ -67,17 +71,18 @@ async function main(){
     console.log(`session ${sid.slice(0,8)} · memory used: ~${(tok/1000).toFixed(0)}k of 200k (${pct}% full)`); return;
   }
   if (cmd === 'switch'){
-    const email = sub; if (!email) return die('usage: bot-harness switch <email> [--stage]');
+    if (!sub) return die('usage: bot-harness switch <account> [--stage]   (an email, or a label if you set one)');
+    const email = resolve(sub); if (!email) return die(`not in the pool: ${sub}`);
     const { setSeatFor, findRemoteServerPid } = await import('../src/app-seat.mjs');
     setSeatFor(email);
-    if (rest.includes('--stage')){ console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m(staged — restart to apply)\x1b[0m`); return; }
+    if (rest.includes('--stage')){ console.log(`\x1b[1m→ ${display(email)}\x1b[0m \x1b[2m(staged — restart to apply)\x1b[0m`); return; }
     const srv = findRemoteServerPid();
     if (srv){
-      console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m· reconnecting…\x1b[0m`);
+      console.log(`\x1b[1m→ ${display(email)}\x1b[0m \x1b[2m· reconnecting…\x1b[0m`);
       const { writeFileSync: wf } = await import('node:fs');
       wf(`${process.env.HOME}/.bot-harness/pending-switch`, String(srv));
     } else {
-      console.log(`\x1b[1m→ ${email}\x1b[0m \x1b[2m(restart the session to apply)\x1b[0m`);
+      console.log(`\x1b[1m→ ${display(email)}\x1b[0m \x1b[2m(restart the session to apply)\x1b[0m`);
     }
     return;
   }

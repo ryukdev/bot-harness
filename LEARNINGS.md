@@ -40,9 +40,12 @@ handoff-seeded transcript (line shapes CLONED from real lines, uuid chain re-lin
 and `claude -p --resume <id>` loaded the fresh transcript and continued from the handoff's next step.
 99.5% of the context reclaimed, id unchanged. Gotchas that cost time: the session id must be a real
 UUID (resume rejects non-UUID ids), and resume looks in `CLAUDE_CONFIG_DIR` — a machine with multiple
-profiles must point at the profile that owns the transcript. Remaining unknown: whether the desktop
-app's WINDOW re-renders the fresh transcript on reconnect (the ccd-cli resume layer is proven; the
-window repaint needs one visual check). Backup is always written before the swap.
+profiles must point at the profile that owns the transcript. Backup is always written before the swap.
+
+**RESOLVED 2026-08-19 on a live desktop remote session.** The rotation holds: the pre-rotate
+conversation (87KB, 62 lines) is genuinely gone from the transcript and does not come back — a
+distinctive phrase from before the swap appears zero times afterwards. The window keeps its
+scrollback, but the model's context really is the handoff, so "same chat, fresh memory" is accurate.
 
 ## 7 · Remote Control survives an ACCOUNT switch but not a SESSION rotation — and that's documented
 Observed live: a phone kept rendering and driving a thread across an account switch **while signed
@@ -61,3 +64,18 @@ Two consequences worth keeping straight. For the product: "no mobile" was wrong 
 tool — the honest limit is that a rotate re-registers rather than resumes. For the upstream ask: the
 account-portable thread identity we're asking for already exists in their own product, on the most
 constrained surface they ship. That is a much stronger argument than a feature request.
+
+## 8 · A reconnect re-injects the harness, and it dwarfs the thread
+Measured on the transcript of a live rotate: 33,884 of 49,830 bytes — **68%** — were attachment lines
+the desktop app re-injects when the session comes back: `skill_listing` (14.6KB),
+`mcp_instructions_delta` (8.1KB), `deferred_tools_delta` (7.1KB), `agent_listing_delta` (2.6KB),
+`auto_mode`. The conversation itself was 15.9KB.
+
+We were measuring raw file size, so `session status` reported **~12k** for a session whose thread was
+a 0.8k handoff — the tool contradicting its own "96% freed" one prompt after printing it. On camera
+that reads as a failed rotation. `conversationChars()` now excludes attachment lines; the same real
+transcript reports 4k instead of 12k.
+
+The lesson generalises past the bug: on a process-bound harness a meaningful part of every context
+window is scaffolding that gets rebuilt on every reconnect, and it is charged to the user's window.
+A thread that lives in a database carries its own state and pays that cost once.

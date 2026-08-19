@@ -29,6 +29,23 @@ export function transcriptPath(sessionId, cwd = process.cwd()){
   }
   return null;
 }
+// conversationChars — what the THREAD actually costs, excluding harness scaffolding.
+// On every reconnect the desktop app re-injects its own context: skill listings, MCP instructions,
+// deferred-tool and agent listings. Measured on a real post-rotate transcript that was 68% scaffolding
+// (33,884 of 49,830 bytes). Counting raw file size makes a freshly rotated session read as ~10k when
+// the conversation in it is a 0.8k handoff — the tool would contradict its own "96% freed" a moment
+// after printing it. These lines are re-created on demand and are not the user's thread, so they do
+// not count toward it.
+export function conversationChars(path){
+  let n = 0;
+  for (const line of readFileSync(path, 'utf8').split('\n')){
+    if (!line) continue;
+    try { if (JSON.parse(line).type === 'attachment') continue; } catch {}
+    n += line.length + 1;
+  }
+  return n;
+}
+
 export function extractText(msg){ if (!msg) return ''; const c = msg.content; if (typeof c === 'string') return c; if (Array.isArray(c)) return c.filter(b=>b.type==='text').map(b=>b.text).join(' '); return ''; }
 export function readTurns(path, limit = 40){
   const out = [];
@@ -88,6 +105,6 @@ export async function rotateInPlace(sessionId, token = null){
   const backup = `${path}.pre-rotate-${Date.now()}`;
   writeFileSync(backup, readFileSync(path));
   writeFileSync(path, JSON.stringify(u) + '\n' + JSON.stringify(a) + '\n');
-  return { backup, before: { turns, chars: readFileSync(backup,'utf8').length }, after: { chars: readFileSync(path,'utf8').length } };
+  return { backup, before: { turns, chars: conversationChars(backup) }, after: { chars: conversationChars(path) } };
 }
 

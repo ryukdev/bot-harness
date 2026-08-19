@@ -6,7 +6,7 @@ import { pickHealthy } from '../src/router.mjs';
 import { get as getConfig, setModel } from '../src/config.mjs';
 import { newestSession, resumeOn } from '../src/seat.mjs';
 import { currentEmail } from '../src/whoami.mjs';
-import { rotate as sessionRotate, makeHandoff, transcriptPath, readTurns } from '../src/session.mjs';
+import { rotate as sessionRotate, makeHandoff, transcriptPath, readTurns, conversationChars } from '../src/session.mjs';
 const [cmd, sub, ...rest] = process.argv.slice(2);
 const arg = (f) => { const i = rest.indexOf(`--${f}`); return i>-1 ? rest[i+1] : null; };
 const model = arg('model') || getConfig().model;
@@ -63,8 +63,7 @@ async function main(){
     if (sub === 'snapshot'){ const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const r=await makeHandoff(sid); console.log(`snapshot: ${r.turns} turns → ${r.snap}\n\n${r.handoff}`); return; }
     const { newestSession } = await import('../src/seat.mjs'); const sid=newestSession(); const p=sid&&transcriptPath(sid);
     if (!p) { console.log('no session here'); return; }
-    const { readFileSync } = await import('node:fs');
-    const chars = readFileSync(p,'utf8').length; const tok = Math.round(chars/4); const pct = Math.min(99, Math.round(tok/200000*100));
+    const chars = conversationChars(p); const tok = Math.round(chars/4); const pct = Math.min(99, Math.round(tok/200000*100));
     console.log(`session ${sid.slice(0,8)} · memory used: ~${(tok/1000).toFixed(0)}k of 200k (${pct}% full)`); return;
   }
   if (cmd === 'switch'){

@@ -79,3 +79,17 @@ transcript reports 4k instead of 12k.
 The lesson generalises past the bug: on a process-bound harness a meaningful part of every context
 window is scaffolding that gets rebuilt on every reconnect, and it is charged to the user's window.
 A thread that lives in a database carries its own state and pays that cost once.
+
+### 8b · …and the same measurement has a second bias, found in review
+Two reviewers on an upstream PR caught what our own fix half-missed. Excluding attachment lines is
+right for *what the thread costs*, but a transcript is a durable log, not a view of the context
+window — and the divergence runs both ways:
+
+* **Under-counts** if you ignore scaffolding when asking "how full am I?" — those bytes are charged.
+* **Over-counts** after a native compaction, because the pre-compaction turns stay in the JSONL while
+  the model's active context holds only the summary.
+
+So `session status` is honest immediately after `rotate --in-place` (we write the transcript, so file
+and context agree) and drifts high if Claude Code compacts the session on its own afterwards. The
+number is a good cost signal and a poor headroom gauge. Reporting it as "memory used" is fine;
+reporting it as "room left" would not be.

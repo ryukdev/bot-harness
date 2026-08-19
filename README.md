@@ -64,6 +64,18 @@ phone needs the session registered again. `bot-harness mobile on` turns on Claud
 `remoteControlAtStartup`, and since both operations restart the session process, the phone
 re-registers by itself — nothing to re-run.
 
+## As a plugin
+
+Installed as a plugin, it adds four slash commands and the skill that lets Claude reach for them on
+its own:
+
+| command | does |
+|---|---|
+| `/thread-status` | how full this chat is, and which account is paying |
+| `/thread-rotate` | refill the context — same session id, work carried forward |
+| `/thread-switch [account]` | move this chat to another account you own |
+| `/thread-doctor` | check the setup on this machine |
+
 ## How it works
 
 The conversation is a local, **account-agnostic transcript**. `claude --resume <id>` continues

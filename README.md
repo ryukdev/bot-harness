@@ -1,4 +1,4 @@
-# bot-harness 🪑
+# bot-harness 🧵
 
 **One project, one thread.**
 

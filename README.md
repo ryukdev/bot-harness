@@ -1,11 +1,11 @@
 # bot-harness 🪑
 
-**One thread. Fresh context, different account, same chat.**
+**One project, one thread.**
 
-A Claude Code conversation normally ends twice: when the context fills, and when the account
-paying for it runs out of room. bot-harness keeps the **same thread** going through both — it
-rotates the context in place, and re-opens the thread on another account *you already own*.
-No new chat, no re-login. Works with any Claude model.
+You work on one project, but the tool makes you work in a dozen chats — because the context filled,
+or the account paying ran out. bot-harness removes both reasons. It rotates the context in place and
+re-opens the thread on another account *you already own*, so the work stays in one place. No new
+chat, no re-login. Works with any Claude model.
 
 ![demo](assets/demo.gif)
 
@@ -106,13 +106,30 @@ removes.
 | one **reconnect** per handoff | context and seats rotate **while you type** |
 | a rotate **re-registers** the phone rather than resuming it | the phone never re-pairs — the thread is a URL |
 | a thread lives on **one machine's** transcripts | the thread lives in a **database** |
+| one session rotates, **every session on that machine blinks** | one thread rotates, alone |
 | switches **accounts** only | smart routing across **N models & harnesses** |
 
-bot-harness keeps a *session* alive. sharingu changes what a session **is**: a thread that lives
-in a database instead of a process — so context, accounts, sessions and models rotate underneath
-it while it keeps going, and a thread that outlives its session can be promoted into a standing
-**agent**. One primitive, **continuous threads for everything.** bot-harness is the wedge;
-sharingu is where a session becomes a living thread.
+## The thing underneath all of it
+
+You work on one project. The tool makes you work in a dozen chats.
+
+Not because you wanted twelve — because the context filled, or the account ran out, or you closed
+the window. So the continuity lives in your head, and you pay for it every time: re-explaining,
+re-pasting, hunting for which chat had the decision in it. The fragmentation is an artefact of how
+sessions are built, and you never asked for it.
+
+bot-harness removes two of the reasons a thread has to end. **One project, one thread** — your
+conversations and decisions in one place, even across accounts you own.
+
+That's also when a thread stops being a chat. Once it outlives the sessions under it, it becomes
+the thing that knows your project — and you start treating it as an agent rather than a
+conversation. It doesn't need to be one unbroken scroll, and it doesn't need to live in one pane;
+work can branch off it. What makes it an agent is that its identity survives.
+
+sharingu is that idea without the process underneath: a thread that lives in a database, so
+context, accounts, sessions and models all rotate beneath it while it keeps going. One primitive,
+**continuous threads for everything.** bot-harness is the wedge; sharingu is where a session
+becomes a living thread.
 
 ## Contributing
 
